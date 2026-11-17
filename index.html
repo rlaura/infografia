@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Los números del aula</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fredoka:wght@500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+/* Idea: cuaderno de primaria con margen rojo, notitas de colores, chicos de guardapolvo y pizarrón para el cierre. Un solo tema claro, a propósito. */
+:root{
+  --paper:#ffffff; --ink:#22304d; --ink-soft:#56627c; --line:#dfe6f2; --grid:rgba(47,128,237,.09); --margin:#ef4b4b;
+  --rojo:#ef4b4b; --amarillo:#ffc928; --azul:#2f80ed; --verde:#22a35a; --naranja:#ff8a3d; --violeta:#9b59d0;
+  --rojo-bg:#ffe1e1; --amarillo-bg:#fff4c2; --azul-bg:#dcebff; --verde-bg:#dbf5e4; --naranja-bg:#ffe6d4; --violeta-bg:#efe2fb;
+  --docente:#2f80ed; --docente-bg:#e6f0ff; --madre:#1f9a55; --madre-bg:#e1f6ea;
+  --f-display:"Fredoka", "Trebuchet MS", system-ui, sans-serif;
+  --f-hand:"Patrick Hand", "Comic Sans MS", cursive;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background-color:var(--paper); color:var(--ink); font-family:var(--f-body); font-size:17px; line-height:1.55;
+  background-image:linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:24px 24px;
+}
+.sheet{max-width:1100px; margin:0 auto; padding:0 20px 40px 20px; position:relative}
+@media (min-width:900px){
+  .sheet{padding-left:76px}
+  .sheet::before{content:""; position:absolute; top:0; bottom:0; left:46px; width:3px; background:var(--margin); opacity:.6}
+}
+h1,h2,h3{font-family:var(--f-display); text-wrap:balance; margin:0; line-height:1.15; font-weight:700}
+h1{font-size:clamp(30px,4.6vw,48px)}
+h2{font-size:clamp(24px,3vw,32px)}
+h3{font-size:19px; font-weight:600}
+p{margin:0}
+.muted{color:var(--ink-soft)}
+.small{font-size:14.5px}
+section{padding-top:56px; display:grid; gap:18px}
+section > *, .panel > *, .two > *, .cols > *, .hero > *{min-width:0}
+.sec-head{display:grid; gap:10px; max-width:70ch; justify-items:start}
+.tag{
+  font-family:var(--f-hand); font-size:21px; line-height:1; padding:6px 14px 5px; background:var(--c-bg, var(--amarillo-bg));
+  color:var(--c, var(--ink)); border-radius:4px; transform:rotate(-2deg); box-shadow:0 2px 0 rgba(0,0,0,.06);
+}
+
+/* Banderines */
+.bunting{display:flex; overflow:hidden; height:46px; margin:0 -20px; position:relative}
+.bunting::before{content:""; position:absolute; left:0; right:0; top:4px; height:2px; background:#c9a27a}
+.bunting span{flex:0 0 40px; height:42px; margin-top:5px; clip-path:polygon(0 0,100% 0,50% 100%)}
+@media (min-width:900px){ .bunting{margin-left:-76px} }
+
+/* Hero */
+header.hero{padding-top:18px; display:grid; grid-template-columns:1.1fr 1fr; gap:24px; align-items:center}
+@media (max-width:820px){ header.hero{grid-template-columns:1fr} }
+.hero-txt{display:grid; gap:16px}
+.kicker{font-family:var(--f-hand); font-size:20px; color:var(--rojo)}
+.lede{max-width:62ch; color:var(--ink-soft); font-size:18px}
+.hero-art svg{width:100%; height:auto; display:block}
+.route{display:flex; flex-wrap:wrap; gap:8px; align-items:center; font-size:15px}
+.route .step{border:2px solid var(--line); background:#fff; border-radius:999px; padding:5px 13px; color:var(--ink-soft); font-family:var(--f-display); font-weight:600}
+.route .step.here{border-color:var(--azul); background:var(--azul-bg); color:var(--azul)}
+.route .arrow{color:var(--ink-soft); font-weight:700}
+.legend{display:flex; flex-wrap:wrap; gap:10px 18px; font-size:14.5px; color:var(--ink-soft)}
+
+/* Voces */
+.chip{display:inline-block; font-family:var(--f-display); font-size:13px; font-weight:600; letter-spacing:.02em; padding:2px 10px; border-radius:999px; justify-self:start}
+.chip.docente{background:var(--docente); color:#fff}
+.chip.madre{background:var(--madre); color:#fff}
+.quotes{display:grid; gap:16px}
+.quote{position:relative; background:var(--docente-bg); border:2.5px solid var(--docente); border-radius:18px; padding:12px 16px 13px; display:grid; gap:6px; margin-bottom:6px}
+.quote::after{content:""; position:absolute; left:26px; bottom:-12px; width:18px; height:18px; background:var(--docente-bg); border-right:2.5px solid var(--docente); border-bottom:2.5px solid var(--docente); transform:rotate(45deg) skew(8deg,8deg)}
+.quote.madre{background:var(--madre-bg); border-color:var(--madre)}
+.quote.madre::after{background:var(--madre-bg); border-color:var(--madre); left:auto; right:26px}
+.quote q{quotes:"“" "”"; font-size:16.5px}
+
+/* Notitas */
+.tiles{display:grid; grid-template-columns:repeat(3,1fr); gap:22px 18px; padding-top:8px}
+@media (max-width:640px){ .tiles{grid-template-columns:repeat(2,1fr)} }
+.tile{position:relative; padding:20px 16px 16px; display:grid; gap:6px; align-content:start; border-radius:3px; box-shadow:0 6px 14px rgba(34,48,77,.12)}
+.tile::before{content:""; position:absolute; top:-10px; left:50%; width:70px; height:20px; transform:translateX(-50%) rotate(-3deg); background:rgba(255,255,255,.65); border:1px solid rgba(0,0,0,.06)}
+.tile .n{font-family:var(--f-display); font-weight:700; font-size:42px; line-height:1; font-variant-numeric:tabular-nums}
+.tile p{font-size:15.5px}
+.tile .src{font-family:var(--f-hand); font-size:16px; color:var(--ink-soft)}
+
+/* Cadena */
+.chain{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+.chain button{
+  all:unset; cursor:pointer; background:#fff; border:3px solid var(--c); border-radius:18px; padding:12px 14px;
+  display:grid; grid-template-columns:44px 1fr; gap:4px 10px; align-items:center; position:relative; box-shadow:0 4px 0 var(--c)
+}
+.chain button svg{grid-row:span 2; width:44px; height:44px}
+.chain .k{font-family:var(--f-hand); font-size:17px; color:var(--c); line-height:1}
+.chain .t{font-family:var(--f-display); font-weight:600; font-size:16.5px; line-height:1.2}
+.chain button[aria-selected="true"]{background:var(--c-bg); transform:translateY(2px); box-shadow:0 2px 0 var(--c)}
+.chain button:not(:last-child)::after{content:"➜"; position:absolute; right:-15px; top:50%; transform:translateY(-50%); color:var(--ink-soft); font-size:15px; z-index:1}
+@media (max-width:760px){
+  .chain{grid-template-columns:1fr}
+  .chain button:not(:last-child)::after{content:"⬇"; right:auto; left:50%; top:auto; bottom:-19px; transform:translateX(-50%)}
+}
+button:focus-visible, a:focus-visible{outline:3px solid var(--violeta); outline-offset:3px}
+.panel{background:#fff; border:2.5px solid var(--line); border-radius:20px; padding:20px; display:grid; gap:14px}
+.two{display:grid; grid-template-columns:1.25fr 1fr; gap:22px}
+@media (max-width:760px){ .two{grid-template-columns:1fr} }
+.col{display:grid; gap:12px; align-content:start}
+.col-title{font-family:var(--f-hand); font-size:20px; color:var(--rojo)}
+
+/* Lecturas */
+.reading{background:var(--amarillo-bg); border-radius:14px; padding:14px; display:grid; gap:8px; position:relative}
+.reading .who{font-family:var(--f-display); font-weight:600}
+.reading .cite{font-family:var(--f-hand); font-size:16px; color:var(--ink-soft)}
+.mark{background:linear-gradient(transparent 55%, rgba(255,201,40,.7) 55%)}
+.limit{font-size:15px; border-top:2px dashed var(--line); padding-top:10px; color:var(--ink-soft)}
+.limit b{color:var(--ink)}
+
+/* Pestañas */
+.tabs{display:flex; gap:6px; overflow-x:auto; padding:4px 2px 0}
+.tabs button{
+  all:unset; cursor:pointer; white-space:nowrap; font-family:var(--f-display); font-weight:600; font-size:15.5px;
+  padding:9px 16px 8px; border-radius:14px 14px 0 0; background:var(--c-bg); color:var(--c); border:2.5px solid transparent; border-bottom:none
+}
+.tabs button[aria-selected="true"]{background:var(--c); color:#fff}
+.tabpanel{border-top-left-radius:0; border-color:var(--cur, var(--line)); border-width:3px}
+.cols{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px}
+ul.plain{margin:0; padding-left:0; list-style:none; display:grid; gap:6px}
+ul.plain li{padding-left:26px; position:relative}
+ul.plain li::before{content:"✓"; position:absolute; left:0; top:0; width:20px; height:20px; border-radius:50%; background:var(--verde); color:#fff; font-size:12px; display:grid; place-items:center; font-weight:700}
+
+/* Tarjeta para dar vuelta */
+.flip{all:unset; cursor:pointer; display:grid; gap:8px; border-radius:16px; padding:14px 16px; background:var(--rojo-bg); border:2.5px dashed var(--rojo)}
+.flip .label{font-family:var(--f-hand); font-size:18px; color:var(--rojo)}
+.flip .txt{font-family:var(--f-display); font-weight:600; font-size:18px; line-height:1.25}
+.flip .hint{font-size:14px; color:var(--ink-soft)}
+.flip[aria-pressed="true"]{background:var(--azul-bg); border:2.5px solid var(--azul)}
+.flip[aria-pressed="true"] .label{color:var(--azul)}
+.flip[aria-pressed="true"] .txt{font-family:var(--f-body); font-weight:400; font-size:16px; line-height:1.5}
+
+/* Día */
+.day{display:grid; gap:8px}
+.daybar{display:grid; grid-template-columns:0.9fr 3fr 1.6fr 0.9fr 3fr; border-radius:14px; overflow:hidden; border:2.5px solid var(--ink); min-height:66px}
+.daybar div{padding:8px; font-size:13.5px; line-height:1.25; display:flex; align-items:flex-end; border-right:2px solid var(--ink)}
+.daybar div:last-child{border-right:none}
+.daybar .meal{background:var(--verde-bg)}
+.daybar .am{background:var(--azul-bg)}
+.daybar .pm{background:var(--violeta-bg)}
+.daybar .lost{background:repeating-linear-gradient(135deg, #fff 0 6px, #ffc4c4 6px 12px); font-weight:700}
+@media (max-width:560px){
+  .daybar{grid-template-columns:1fr}
+  .daybar div{border-right:none; border-bottom:2px solid var(--ink); min-height:40px; align-items:center}
+  .daybar div:last-child{border-bottom:none}
+}
+
+/* Mapa */
+.matrix-wrap{overflow-x:auto}
+table.matrix{border-collapse:separate; border-spacing:0; width:100%; min-width:620px; background:#fff; border:2.5px solid var(--line); border-radius:20px; overflow:hidden}
+.matrix th, .matrix td{padding:10px 12px; border-bottom:2px dashed var(--line); text-align:left; vertical-align:middle}
+.matrix tr:last-child td{border-bottom:none}
+.matrix thead th{font-family:var(--f-display); font-size:15px; font-weight:600; border-bottom:2.5px solid var(--line)}
+.matrix thead th.c{text-align:center; color:var(--c)}
+.matrix td.c{text-align:center; width:96px}
+.matrix button{all:unset; cursor:pointer; display:grid; gap:2px; border-radius:8px; padding:2px 4px}
+.matrix .cat{font-family:var(--f-display); font-weight:600; font-size:16px}
+.matrix .aut{font-family:var(--f-hand); font-size:16px; color:var(--ink-soft)}
+.matrix tr.sel td{background:var(--amarillo-bg)}
+.dot{display:inline-block; width:18px; height:18px; border-radius:50%; background:var(--c, var(--ink))}
+.dot.half{background:#fff; border:3px solid var(--c, var(--ink))}
+.matrix td.c button{display:inline-grid; place-items:center; width:34px; height:34px}
+
+/* Límites */
+.limits .panel{border-top:8px solid var(--c)}
+
+/* Pizarrón */
+.board{background:#2e5e48; color:#f3f3ea; border:14px solid #b8804a; border-radius:12px; padding:26px 26px 22px; display:grid; gap:14px; position:relative; box-shadow:inset 0 0 40px rgba(0,0,0,.25), 0 8px 18px rgba(34,48,77,.18)}
+.board h2{font-family:var(--f-hand); font-weight:400; font-size:clamp(30px,4vw,40px); color:#fff}
+.board .kick{font-family:var(--f-hand); font-size:20px; color:var(--amarillo)}
+.board ol{margin:0; padding-left:22px; display:grid; gap:8px; font-family:var(--f-hand); font-size:21px; line-height:1.3}
+.board .doodle{position:absolute; right:22px; top:16px; font-family:var(--f-hand); font-size:24px; color:rgba(255,255,255,.55); transform:rotate(6deg)}
+@media (max-width:560px){ .board .doodle{display:none} }
+.btns{display:flex; flex-wrap:wrap; gap:12px; padding-top:4px}
+.btn{display:inline-block; text-decoration:none; font-family:var(--f-display); font-weight:600; padding:10px 18px; border-radius:999px; background:var(--amarillo); color:var(--ink); border:2.5px solid var(--amarillo)}
+.btn.ghost{background:transparent; color:#fff; border-color:#fff}
+.btn.pending{opacity:.75; cursor:not-allowed}
+
+footer{padding-top:44px; display:grid; gap:10px; font-size:14px; color:var(--ink-soft)}
+footer ul{margin:0; padding-left:18px; display:grid; gap:3px}
+.pencils svg{width:100%; max-width:520px; height:auto; display:block}
+@media (prefers-reduced-motion: no-preference){
+  .panel{animation:pop .25s ease}
+  @keyframes pop{from{opacity:.5; transform:translateY(3px)}to{opacity:1; transform:none}}
+  .tile:hover{transform:rotate(0deg) scale(1.02) !important; transition:transform .15s}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+<div class="bunting" id="bunting" aria-hidden="true"></div>
+
+<header class="hero">
+  <div class="hero-txt">
+    <p class="kicker">Los números del aula · Infografía</p>
+    <h1>¿Qué hay detrás de las dificultades en Matemática de un 5º grado?</h1>
+    <p class="lede">Una docente y una madre cuentan cómo se enseña y se aprende Matemática en un 5º grado de una escuela primaria estatal de San Martín. En esta infografía relacionamos lo que cuentan con categorías de la sociología de la educación, para mirar las condiciones en las que se enseña y no solo a cada estudiante.</p>
+    <div class="route" aria-label="Recorrido entre las piezas">
+      <span class="step">1. Podcast</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="step here">2. Infografía (estás acá)</span><span class="arrow" aria-hidden="true">→</span>
+      <span class="step">3. Mural Nuestras Voces Matemáticas</span>
+    </div>
+    <div class="legend">
+      <span><span class="chip docente">Docente</span> lo dice la docente de Matemática del grado</span>
+      <span><span class="chip madre">Madre</span> lo dice la madre de un estudiante</span>
+    </div>
+  </div>
+  <div class="hero-art" id="heroArt" role="img" aria-label="Dibujo de cuatro chicos de guardapolvo blanco en el patio de la escuela, con números y un sol"></div>
+</header>
+
+<section aria-labelledby="h-num">
+  <div class="sec-head">
+    <span class="tag" style="--c:var(--rojo);--c-bg:var(--rojo-bg)">El grado en números</span>
+    <h2 id="h-num">Seis datos para empezar</h2>
+    <p class="muted">Todos surgen de la entrevista a la docente. No son estadísticas oficiales: describen este grado según su relato.</p>
+  </div>
+  <div class="tiles" id="tiles"></div>
+</section>
+
+<section aria-labelledby="h-chain">
+  <div class="sec-head">
+    <span class="tag" style="--c:var(--azul);--c-bg:var(--azul-bg)">Materiales y faltas</span>
+    <h2 id="h-chain">Faltar y no tener con qué seguir en casa</h2>
+    <p class="muted">Tocá cada paso para ver qué cuentan la docente y la madre.</p>
+  </div>
+  <div class="chain" role="tablist" aria-label="Pasos de la cadena" id="chain"></div>
+  <div class="panel" id="chainPanel" role="tabpanel" aria-live="polite"></div>
+</section>
+
+<section aria-labelledby="h-sit">
+  <div class="sec-head">
+    <span class="tag" style="--c:var(--violeta);--c-bg:var(--violeta-bg)">Análisis</span>
+    <h2 id="h-sit">Cuatro situaciones, leídas sociológicamente</h2>
+    <p class="muted">En cada una: lo que cuentan, una explicación rápida frente a la mirada sociológica, lo que hace la docente y lo que no podemos afirmar.</p>
+  </div>
+  <div>
+    <div class="tabs" role="tablist" aria-label="Situaciones" id="tabs"></div>
+    <div class="panel tabpanel" role="tabpanel" id="tabpanel"></div>
+  </div>
+</section>
+
+<section aria-labelledby="h-mat">
+  <div class="sec-head">
+    <span class="tag" style="--c:var(--naranja);--c-bg:var(--naranja-bg)">Mapa de categorías</span>
+    <h2 id="h-mat">Qué categoría usamos para leer cada situación</h2>
+    <p class="muted">Tocá una categoría para ver qué dice el autor. Tocá un punto para ir a esa situación. Punto lleno: uso central. Punto vacío: uso complementario.</p>
+  </div>
+  <div class="matrix-wrap"><table class="matrix" id="matrix"></table></div>
+  <div class="panel" id="catPanel" aria-live="polite"></div>
+</section>
+
+<section aria-labelledby="h-cta">
+  <div class="board">
+    <span class="doodle" aria-hidden="true">2 + 2 = 4 ☆</span>
+    <p class="kick">Seguí el recorrido</p>
+    <h2 id="h-cta">Nuestras Voces Matemáticas</h2>
+    <p>Te invitamos a contar tu experiencia en el mural, en el Padlet o en el afiche de la escuela. Podés responder con un texto, un dibujo, una foto o un audio de WhatsApp.</p>
+    <p class="kick">Familias y estudiantes</p>
+    <ol>
+      <li>¿En qué momentos de tu día usás la Matemática?</li>
+      <li>¿Qué te cuesta (o te costaba) de la Matemática de la escuela?</li>
+    </ol>
+    <p class="kick">Docentes</p>
+    <ol>
+      <li>¿Qué podemos hacer con el tiempo de clase que se pierde antes del comedor?</li>
+      <li>¿Con qué materiales pueden seguir los chicos cuando faltan?</li>
+      <li>¿Cómo podemos llevar al aula la Matemática que los chicos y sus familias usan fuera de la escuela?</li>
+    </ol>
+    <div class="btns">
+      <a class="btn" id="padletBtn" href="#">Ir al mural (Padlet)</a>
+      <a class="btn ghost" id="podcastBtn" href="#">Volver al podcast</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="pencils" id="pencils" aria-hidden="true"></div>
+  <p><b>Fuentes.</b> Entrevista a la docente de Matemática y Ciencias Naturales de 5º grado y entrevista a la madre de un estudiante del grado, realizadas por el grupo en noviembre de 2026. Para resguardar la identidad de las personas, no incluimos nombres ni datos de la escuela.</p>
+  <ul>
+    <li>Bourdieu, P. (1979). Los tres estados del capital cultural. <i>Actes de la Recherche en Sciences Sociales</i>, 30, 3-6.</li>
+    <li>Dussel, I. (2007). El currículum. En <i>Explora Pedagogía</i> (pp. 3-6). Ministerio de Educación, Ciencia y Tecnología de la Nación.</li>
+    <li>Giddens, A. (2000). ¿Qué es la sociología? En <i>Sociología</i>.</li>
+    <li>Kaplan, C. V. (2006). <i>La inclusión como posibilidad</i>. Ministerio de Educación, Ciencia y Tecnología de la Nación.</li>
+    <li>Tenti Fanfani, E. (2010). <i>Sociología de la educación</i>. Ministerio de Educación de la Nación (Colección Aportes para el desarrollo curricular).</li>
+  </ul>
+  <p>Grupo 3 · Sociología de la Educación · 2026. Pieza 2 de la narrativa transmedia.</p>
+</footer>
+</div>
+
+<script>
+
+// Enlaces del recorrido: completar con los links reales.
+const PADLET_URL = "https://padlet.com/mairarobledo/nuestras-voces-matematicas-s0252j9vhdwqy1c2xjw8";
+const PODCAST_URL = "https://suno.com/s/5CoYu0854UMp8mWm";
+
+const D = (t) => ({v:"docente", t});
+const M = (t) => ({v:"madre", t});
+
+const TILES = [
+  {n:"28", t:"estudiantes en el grado."},
+  {n:"+50", t:"faltas tienen algunos estudiantes en el año."},
+  {n:"3", t:"docentes pasaron este año por Matemática y Ciencias Naturales."},
+  {n:"1 de 2", t:"horas de Matemática se pierden casi por completo los tres días en que la clase cae antes del comedor."},
+  {n:"12", t:"estudiantes están “en proceso” de aprobar Matemática; los que aprobaron, “con lo justito”."},
+  {n:"1", t:"colectivo, que pasa con muy poca frecuencia, deja a dos cuadras de la escuela."}
+];
+
+const CHAIN = [
+  {k:"Paso 1", t:"Un estudiante falta",
+   txt:"Algunos faltan porque cuidan a sus hermanos o ayudan a sus padres en el trabajo. Cuando llueve mucho, las zonas donde viven se vuelven intransitables y casi nadie llega.",
+   q:[D("Hay chicos con más de 50 faltas, por distintas situaciones: cuidan hermanos o ayudan a los padres en el trabajo."),
+      M("Si llueve demasiado, directamente no van porque es un peligro.")]},
+  {k:"Paso 2", t:"Los materiales quedan en la escuela",
+   txt:"Como los útiles que se llevaban a casa se perdían, la escuela decidió guardar un kit, con materiales que compraron los docentes.",
+   q:[D("En marzo se entregaron útiles completos, pero los que se llevaban a casa se perdían o no volvían. Por eso se decidió dejar un kit en la escuela."),
+      D("Los docentes no pueden comprar útiles todas las semanas y tampoco se puede exigir a los padres que los compren.")]},
+  {k:"Paso 3", t:"En casa no hay con qué seguir",
+   txt:"Las familias no siempre pueden comprar el cuadernillo, las fotocopias o los útiles. Casi nadie tiene Internet. La docente manda fotos de las actividades por WhatsApp, pero eso depende de un celular compartido.",
+   q:[D("En las casas casi ninguno tiene internet."),
+      M("Tiene un librito, las fotocopias no las pudimos comprar. La seño nos pasa las fotos con lo que tienen que hacer o con la fotocopia. Se ve todo chiquito."),
+      M("Trato de comprarlos, pero tengo [varios] chicos… no llego a todo.")]},
+  {k:"Paso 4", t:"Lo que se pierde cuesta recuperarlo",
+   txt:"La tarea suele hacerse a la tarde en la escuela; la del fin de semana la hacen muy pocos. Lo que no se trabaja en clase difícilmente se recupera fuera de ella.",
+   q:[D("Así se pierde mucho la progresión de los contenidos."),
+      M("A veces entiende en la escuela, pero después en casa no sabe cómo hacerlos.")]}
+];
+const CHAIN_READING = {
+  who:"Tenti Fanfani: una escuela sobre-demandada y sub-dotada",
+  body:"A la escuela se le pide que enseñe y, al mismo tiempo, que garantice condiciones materiales que no puede cubrir con sus recursos. En este caso, parte de ese faltante lo cubren los docentes con su propio dinero. El kit resuelve un problema (que los materiales no se pierdan), pero hace más difícil otro: seguir las actividades cuando se falta.",
+  cite:"Tenti Fanfani, 2010, p. 40",
+  limit:"Con estos relatos no podemos saber cuánto incide esto en los aprendizajes de cada estudiante."
+};
+
+const SIT = [
+ {id:"s1", tab:"2.1 Faltar a clase", title:"Faltar a clase: inasistencias y acceso a los materiales",
+  q:[D("Algunos chicos faltan mucho porque los padres trabajan muchas horas."),
+     D("Si llueve mucho no va ninguno."),
+     M("Cuando llueve mucho se complica. A veces no podemos salir del barrio.")],
+  quick:"Faltan porque a las familias no les importa la escuela.",
+  socio:"Giddens propone tomar distancia de esa explicación. Con la imaginación sociológica, las faltas aparecen ligadas a las jornadas laborales de las familias, a las tareas de cuidado que asumen algunos estudiantes y a las condiciones del barrio, como el transporte y las inundaciones. Eso no borra la experiencia de cada estudiante: la sitúa en un contexto más amplio.",
+  cats:[{who:"Giddens: la imaginación sociológica", body:"Permite ver que <span class=\"mark\">“muchos acontecimientos que parecen preocupar únicamente al individuo en realidad tienen que ver con asuntos más generales”</span>.", cite:"Giddens, 2000, p. 30"},
+        {who:"Tenti Fanfani: escuela sobre-demandada y sub-dotada", body:"La escuela compra y guarda materiales que las familias no pueden garantizar. La docente lo resume: <span class=\"mark\">“la escuela no tiene los medios. Hacemos más de lo que podemos realmente”</span>.", cite:"Tenti Fanfani, 2010, p. 40"}],
+  does:["Un kit de materiales guardado en la escuela, comprado por los docentes.","Fotos de las actividades por WhatsApp para que lleguen a las casas.","La tarea se hace a la tarde, en la escuela, con las profes."],
+  limit:"No sabemos cuánto inciden las faltas en los aprendizajes de cada estudiante. Sí que lo que se pierde por faltar difícilmente se recupera en casa."},
+ {id:"s2", tab:"2.2 Tiempo y comedor", title:"El tiempo de enseñanza en una jornada con comedor", day:true,
+  q:[D("Tres días por semana los tengo antes del comedor y ahí ya sé que tengo dos horas, pero una la doy casi por perdida."),
+     D("Hay mucho olor a comida en toda la escuela y los pone peor."),
+     D("Intento recuperar los días que los tengo a la tarde, pero no siempre dan los tiempos.")],
+  quick:"El comedor le quita tiempo a la escuela.",
+  socio:"El comedor no es el problema: garantiza que los chicos coman. Lo que muestra la situación es que alimentar y enseñar son tareas que la escuela tiene que cumplir en la misma jornada y que compiten por el mismo tiempo. La pregunta es qué lugar le queda a la enseñanza cuando el día también se organiza alrededor de la comida.",
+  cats:[{who:"Tenti Fanfani: escuela sobre-demandada", body:"A la misma institución se le pide alimentar, contener y enseñar.", cite:"Tenti Fanfani, 2010, p. 40"},
+        {who:"Dussel: el currículum también organiza el tiempo", body:"Con tantas tareas, la enseñanza de las materias muchas veces queda relegada <span class=\"mark\">“a segundo o tercer plano”</span>. El currículum, además, <span class=\"mark\">“plantea una organización de la escuela, de sus horarios y de su distribución de tareas”</span>.", cite:"Dussel, 2007, pp. 3-4"}],
+  does:["Juegos y otras dinámicas en la hora previa al comedor.","Recuperar contenidos los días que tiene al grupo a la tarde.","A la tarde, juegos sobre los temas de la mañana."],
+  limit:"No podemos establecer cómo afecta esto a los aprendizajes del curso. Sí que reduce el tiempo disponible para enseñar Matemática."},
+ {id:"s3", tab:"2.3 Grado heterogéneo", title:"Enseñar Matemática en un grado heterogéneo: las decisiones de la docente",
+  q:[D("Es una solución parcial, porque tengo como 3 grados en uno solo, pero al menos avanzan."),
+     D("Muchos reconocen los números, pero tienen problemas para interpretar un problema, leer una consigna y saber qué hacer."),
+     D("Cuando me enfrenté al grupo me di cuenta lo mucho que distaba eso de lo que pasaba en el salón."),
+     D("Un poco de las dos… depende mucho de la escuela de procedencia. No son todos los casos iguales."),
+     M("Le gusta ayudarme a contar la mercadería, a calcular plata, o sea que sabe mucho.")],
+  quick:"Los chicos que vienen de otras escuelas saben menos.",
+  socio:"Kaplan distingue diversidad de desigualdad. Resolver un procedimiento de otra forma es parte de la diversidad de recorridos escolares y no indica que alguien sepa menos. No haber visto ciertos contenidos sí remite a una desigualdad. Además, con Bourdieu, el cálculo con la mercadería y la plata es un saber que vale fuera de la escuela, aunque no sea el que se pide en el aula: la distancia entre ambos no puede leerse como falta de capacidad.",
+  cats:[{who:"Tenti Fanfani: el contexto habilita y limita", body:"Las condiciones <span class=\"mark\">“nos permiten actuar y al mismo tiempo nos fijan límites a nuestra acción”</span>.", cite:"Tenti Fanfani, 2010, p. 16"},
+        {who:"Kaplan: márgenes, diversidad y trayectorias", body:"Los docentes tienen <span class=\"mark\">“márgenes de autonomía y creatividad”</span> dentro de los condicionamientos. <span class=\"mark\">“No es lo mismo desigualdad que diversidad”</span>. Las trayectorias se recorren <span class=\"mark\">“de modos heterogéneos, variables y contingentes”</span>.", cite:"Kaplan, 2006, pp. 10, 50 y 39"},
+        {who:"Dussel: currículum prescripto y real", body:"Lo escrito en la planificación no coincide con lo que pasa en el aula. El currículum <span class=\"mark\">“siempre involucra una selección de la cultura”</span>.", cite:"Dussel, 2007, p. 4"},
+        {who:"Bourdieu: capital cultural", body:"Objetivado: el cuadernillo, la regla, el compás. Incorporado: el cálculo con la mercadería. Saberes poco valorados en la escuela <span class=\"mark\">“pueden tener un valor altamente positivo en otros mercados”</span>.", cite:"Bourdieu, 1979, pp. 2 y 6"}],
+  does:["Divide el grado en grupitos con actividades diferenciadas y explica “por mesas”.","Trabaja con un cuadernillo para que puedan seguir y guiarse.","Vuelve a dar temas de 4º grado y del ciclo básico.","Tiene en cuenta los distintos procedimientos al evaluar."],
+  limit:"El relato muestra qué estrategias puso en práctica, pero no qué efectos tuvieron. Tampoco permite atribuir las diferencias de nivel al lugar donde cursaron antes."},
+ {id:"s4", tab:"2.4 Docentes y familias", title:"Cambios de docentes y comunicación con las familias",
+  q:[D("Hay que arrancar con un diagnóstico, conocer al grupo y formar un vínculo, y eso lleva tiempo."),
+     D("Prefieren cobrar menos pero trabajar en una escuela más céntrica, más segura y con menos dificultades de acceso."),
+     M("Trabajo y no tengo tiempo de ir. Me gustaría que me contaran más seguido de cómo va, porque si le va mal quiero ayudarlo."),
+     M("Hace muchos años que fui a la escuela y algunas cosas no las entiendo.")],
+  quick:"Las familias que no van a las reuniones no se interesan.",
+  socio:"La madre entrevistada sí se interesa: quiere saber cómo va su hijo para poder ayudarlo. Lo que pone límites es el trabajo y sus propias posibilidades de acompañarlo con los contenidos. La docente parece reconocerlo cuando dice: “Se entiende que no siempre quieran o puedan”. Del lado de la escuela, la rotación docente responde a reglas como el puntaje y el plus por desfavorabilidad, no solo a decisiones individuales.",
+  cats:[{who:"Tenti Fanfani: la organización escolar", body:"La organización provee recursos y establece normas y tradiciones que enmarcan la acción de sus integrantes. Quiénes llegan a esta escuela y cuánto se quedan depende también de cómo se cubren los cargos.", cite:"Tenti Fanfani, 2010, p. 25"},
+        {who:"Tenti Fanfani: las familias", body:"Muchas familias no están en condiciones materiales de asumir todas las tareas que antes se esperaban de ellas durante la escolarización.", cite:"Tenti Fanfani, 2010, p. 41"},
+        {who:"Giddens: la imaginación sociológica", body:"No ir a una reunión no equivale necesariamente a desinterés.", cite:"Giddens, 2000, p. 30"}],
+  does:["Actividades pensadas para que los padres se involucren, aunque “no siempre responden”.","Un grupo de WhatsApp para noticias y materiales (la madre pide que cuente también cómo van los chicos)."],
+  limit:"Es la explicación de una docente y la experiencia de una madre. No podemos afirmar cuántas familias comparten esa mirada."}
+];
+
+const DAY = [
+  {t:"Desayuno", c:"meal"},
+  {t:"Mañana: materias comunes, Educación Física, Inglés, Plástica", c:""},
+  {t:"Última hora: Matemática 3 días por semana", c:"lost"},
+  {t:"Almuerzo", c:"meal"},
+  {t:"Tarde: acompañamiento, apoyo, juegos y talleres. Colación.", c:""}
+];
+
+const CATS = [
+  {name:"Imaginación sociológica", aut:"Giddens (2000)", map:{s1:2,s4:2},
+   body:"Permite ver que muchos acontecimientos que parecen preocupar solo al individuo <span class=\"mark\">“en realidad tienen que ver con asuntos más generales”</span>. La usamos para no leer las faltas ni la ausencia en las reuniones como desinterés.", cite:"Giddens, 2000, p. 30"},
+  {name:"Escuela sobre-demandada y sub-dotada", aut:"Tenti Fanfani (2010)", map:{s1:2,s2:2},
+   body:"A la escuela se le pide cada vez más (alimentar, contener, enseñar) con recursos que no alcanzan. Aparece en el kit que compran los docentes y en la hora previa al comedor.", cite:"Tenti Fanfani, 2010, p. 40"},
+  {name:"El contexto habilita y limita", aut:"Tenti Fanfani (2010)", map:{s3:2},
+   body:"Lo que hacemos depende también del contexto, de los recursos y de las reglas, que <span class=\"mark\">“nos permiten actuar y al mismo tiempo nos fijan límites”</span>. Ayuda a ver las decisiones de la docente sin caer en el voluntarismo ni en el fatalismo.", cite:"Tenti Fanfani, 2010, p. 16"},
+  {name:"Organización escolar", aut:"Tenti Fanfani (2010)", map:{s4:2},
+   body:"La organización provee recursos y establece normas y tradiciones que enmarcan la acción. La usamos para pensar la rotación docente.", cite:"Tenti Fanfani, 2010, p. 25"},
+  {name:"Currículum prescripto y real", aut:"Dussel (2007)", map:{s2:2,s3:2},
+   body:"Distingue lo que establece la letra escrita de lo que efectivamente pasa en la escuela. También muestra que el currículum organiza horarios y tareas, y que siempre es una selección de la cultura.", cite:"Dussel, 2007, pp. 3-4"},
+  {name:"Diversidad, desigualdad y trayectorias", aut:"Kaplan (2006)", map:{s3:2},
+   body:"<span class=\"mark\">“No es lo mismo desigualdad que diversidad”</span>. Las trayectorias no son lineales, y los docentes tienen márgenes de acción dentro de las condiciones.", cite:"Kaplan, 2006, pp. 10, 39, 41 y 50"},
+  {name:"Capital cultural", aut:"Bourdieu (1979)", map:{s3:2,s1:1},
+   body:"En estado objetivado, los materiales que las familias no siempre pueden comprar. En estado incorporado, los cálculos que un estudiante hace con la mercadería y la plata: un saber valioso fuera de la escuela, aunque poco reconocido en el aula.", cite:"Bourdieu, 1979, pp. 2 y 6"}
+];
+
+
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const quoteHTML = q => `<div class="quote ${q.v}"><span class="chip ${q.v}">${q.v==="docente"?"Docente":"Madre"}</span><q>${esc(q.t)}</q></div>`;
+const readingHTML = r => `<div class="reading"><span class="who">${r.who}</span><p>${r.body}</p><span class="cite">${r.cite}</span></div>`;
+const OUT = "#22304d";
+
+/* ---------- Dibujos ---------- */
+const COLORS = ["#ef4b4b","#ffc928","#2f80ed","#22a35a","#ff8a3d","#9b59d0"];
+document.getElementById("bunting").innerHTML = Array.from({length:40},(_,i)=>`<span style="background:${COLORS[i%6]}"></span>`).join("");
+
+function hairSVG(style, c){
+  const cap = `<path d="M-25 94 Q-26 64 0 63 Q26 64 25 94 Q16 79 0 81 Q-14 79 -25 94Z" fill="${c}" stroke="${OUT}" stroke-width="2.5" stroke-linejoin="round"/>`;
+  if(style==="colitas") return `<circle cx="-30" cy="86" r="10" fill="${c}" stroke="${OUT}" stroke-width="2.5"/><circle cx="30" cy="86" r="10" fill="${c}" stroke="${OUT}" stroke-width="2.5"/><circle cx="-22" cy="84" r="3.5" fill="#ef4b4b"/><circle cx="22" cy="84" r="3.5" fill="#ef4b4b"/>` + cap;
+  if(style==="rulos") return [[-18,76,11],[-5,68,12],[9,68,12],[20,77,11],[-25,90,8],[25,90,8]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" stroke="${OUT}" stroke-width="2.5"/>`).join("") + `<path d="M-22 88 Q0 74 22 88 Q0 84 -22 88Z" fill="${c}"/>`;
+  if(style==="largo") return `<path d="M-25 88 Q-34 122 -20 134 L-12 98Z M25 88 Q34 122 20 134 L12 98Z" fill="${c}" stroke="${OUT}" stroke-width="2.5" stroke-linejoin="round"/>` + cap;
+  return cap;
+}
+function arm(x1,y1,x2,y2,skin){
+  return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${OUT}" stroke-width="13" stroke-linecap="round"/>
+          <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+          <circle cx="${x2}" cy="${y2}" r="6" fill="${skin}" stroke="${OUT}" stroke-width="2.5"/>`;
+}
+function kid(o){
+  const {x, skin, hair, style, bow, pose, item, s=1} = o;
+  let back = "", front = "", arms = "";
+  if(item==="mochila") back = `<rect x="10" y="122" width="26" height="46" rx="8" fill="#ef4b4b" stroke="${OUT}" stroke-width="2.5"/><rect x="15" y="140" width="16" height="12" rx="3" fill="#ffc928" stroke="${OUT}" stroke-width="2"/>`;
+  if(pose==="wave") arms = arm(-18,128,-30,168,skin) + arm(18,128,38,92,skin);
+  if(pose==="hold") arms = arm(-18,128,-12,160,skin) + arm(18,128,12,160,skin);
+  if(pose==="pencil") arms = arm(-18,128,-30,168,skin) + arm(18,128,34,96,skin)
+     + `<g transform="translate(34,96) rotate(-25)"><rect x="-4" y="-46" width="9" height="40" fill="#ffc928" stroke="${OUT}" stroke-width="2"/><path d="M-4 -46 L0.5 -58 L5 -46Z" fill="#f5d7b0" stroke="${OUT}" stroke-width="2" stroke-linejoin="round"/><rect x="-4" y="-8" width="9" height="6" fill="#ef4b4b" stroke="${OUT}" stroke-width="2"/></g>`;
+  if(pose==="both") arms = arm(-18,128,-38,92,skin) + arm(18,128,38,92,skin);
+  if(item==="cuaderno") front = `<g transform="rotate(-4 0 160)"><rect x="-24" y="146" width="48" height="34" rx="3" fill="#2f80ed" stroke="${OUT}" stroke-width="2.5"/><rect x="-18" y="151" width="36" height="24" rx="2" fill="#fff"/><text x="0" y="169" text-anchor="middle" font-family="Patrick Hand, cursive" font-size="15" fill="${OUT}">3×4</text></g>`;
+  return `<g transform="translate(${x},0) scale(${s})" >
+    ${back}
+    <rect x="-12" y="192" width="9" height="26" fill="${skin}" stroke="${OUT}" stroke-width="2.5"/>
+    <rect x="3" y="192" width="9" height="26" fill="${skin}" stroke="${OUT}" stroke-width="2.5"/>
+    <ellipse cx="-9" cy="221" rx="10" ry="5" fill="${OUT}"/><ellipse cx="9" cy="221" rx="10" ry="5" fill="${OUT}"/>
+    <path d="M-28 198 L-19 121 Q0 112 19 121 L28 198Z" fill="#fff" stroke="${OUT}" stroke-width="2.5" stroke-linejoin="round"/>
+    <line x1="0" y1="130" x2="0" y2="198" stroke="#cfd8e6" stroke-width="2"/>
+    <circle cx="4" cy="146" r="2.3" fill="${OUT}"/><circle cx="4" cy="162" r="2.3" fill="${OUT}"/><circle cx="4" cy="178" r="2.3" fill="${OUT}"/>
+    ${arms}
+    <path d="M0 122 L-14 113 L-14 131Z M0 122 L14 113 L14 131Z" fill="${bow}" stroke="${OUT}" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="0" cy="122" r="4" fill="${bow}" stroke="${OUT}" stroke-width="2"/>
+    ${style==="largo"||style==="colitas" ? hairSVG(style,hair).replace(/<path d="M-25 94[^>]*>/,"") : ""}
+    <circle cx="0" cy="92" r="24" fill="${skin}" stroke="${OUT}" stroke-width="2.5"/>
+    ${style==="largo"||style==="colitas" ? hairSVG("corto",hair) : hairSVG(style,hair)}
+    <circle cx="-8" cy="94" r="2.8" fill="${OUT}"/><circle cx="8" cy="94" r="2.8" fill="${OUT}"/>
+    <circle cx="-14" cy="102" r="4" fill="#ff8fa3" opacity=".55"/><circle cx="14" cy="102" r="4" fill="#ff8fa3" opacity=".55"/>
+    <path d="M-7 103 Q0 110 7 103" fill="none" stroke="${OUT}" stroke-width="2.5" stroke-linecap="round"/>
+    ${front}
+  </g>`;
+}
+const nums = [["1",40,70,"#ef4b4b",-12],["+",118,40,"#22a35a",0],["3",205,30,"#2f80ed",10],["÷",290,52,"#9b59d0",0],["7",6,140,"#ff8a3d",8],["=",400,140,"#ef4b4b",0]];
+document.getElementById("heroArt").innerHTML = `<svg viewBox="0 0 440 250" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(392,46)">
+    ${Array.from({length:10},(_,i)=>`<line x1="0" y1="-30" x2="0" y2="-40" stroke="#ffc928" stroke-width="4" stroke-linecap="round" transform="rotate(${i*36})"/>`).join("")}
+    <circle r="22" fill="#ffc928" stroke="${OUT}" stroke-width="2.5"/>
+    <circle cx="-7" cy="-3" r="2.3" fill="${OUT}"/><circle cx="7" cy="-3" r="2.3" fill="${OUT}"/>
+    <path d="M-7 6 Q0 12 7 6" fill="none" stroke="${OUT}" stroke-width="2.3" stroke-linecap="round"/>
+  </g>
+  <path d="M60 38 q8 -14 22 -6 q12 -10 22 4 q12 2 6 12 h-48 q-12 -2 -2 -10z" fill="#fff" stroke="${OUT}" stroke-width="2.2"/>
+  ${nums.map(([t,x,y,c,r])=>`<text x="${x}" y="${y}" font-family="Fredoka, sans-serif" font-weight="700" font-size="30" fill="${c}" transform="rotate(${r} ${x} ${y})">${t}</text>`).join("")}
+  <path d="M0 226 Q110 212 220 222 T440 220 V250 H0Z" fill="#8fd694" stroke="${OUT}" stroke-width="2.5"/>
+  ${kid({x:70, skin:"#f3cba5", hair:"#3b2416", style:"corto", bow:"#2f80ed", pose:"wave", item:"mochila"})}
+  ${kid({x:165, skin:"#a86b3c", hair:"#1d1d1d", style:"colitas", bow:"#2f80ed", pose:"hold", item:"cuaderno"})}
+  ${kid({x:260, skin:"#d9a06b", hair:"#1d1d1d", style:"rulos", bow:"#2f80ed", pose:"pencil"})}
+  ${kid({x:355, skin:"#f0bf92", hair:"#8a5523", style:"largo", bow:"#2f80ed", pose:"both"})}
+</svg>`;
+
+document.getElementById("pencils").innerHTML = `<svg viewBox="0 0 520 60" xmlns="http://www.w3.org/2000/svg">${COLORS.map((c,i)=>{
+  const y = 8 + i*8, x = 10 + (i%2)*30;
+  return `<g transform="translate(${x},${y})"><rect x="0" y="0" width="${380 - i*18}" height="10" rx="2" fill="${c}" stroke="${OUT}" stroke-width="1.5"/><path d="M${380 - i*18} 0 L${400 - i*18} 5 L${380 - i*18} 10Z" fill="#f5d7b0" stroke="${OUT}" stroke-width="1.5" stroke-linejoin="round"/><path d="M${394 - i*18} 3 L${400 - i*18} 5 L${394 - i*18} 7Z" fill="${c}"/></g>`}).join("")}</svg>`;
+
+/* Íconos de la cadena */
+const ICONS = [
+  `<svg viewBox="0 0 44 44"><path d="M10 24 q-6 0 -6 -6 q0 -6 7 -6 q3 -7 11 -6 q8 1 9 8 q7 0 7 6 q0 5 -6 5Z" fill="#fff" stroke="${OUT}" stroke-width="2.2"/><g stroke="#2f80ed" stroke-width="3" stroke-linecap="round"><line x1="13" y1="30" x2="11" y2="36"/><line x1="22" y1="30" x2="20" y2="37"/><line x1="31" y1="30" x2="29" y2="36"/></g></svg>`,
+  `<svg viewBox="0 0 44 44"><rect x="6" y="16" width="32" height="22" rx="3" fill="#ffc928" stroke="${OUT}" stroke-width="2.2"/><path d="M6 16 L12 8 H32 L38 16" fill="#ffe7a0" stroke="${OUT}" stroke-width="2.2" stroke-linejoin="round"/><rect x="14" y="4" width="4" height="16" fill="#ef4b4b" stroke="${OUT}" stroke-width="1.5" transform="rotate(-20 16 12)"/><rect x="18" y="22" width="8" height="5" rx="1" fill="#fff" stroke="${OUT}" stroke-width="1.5"/></svg>`,
+  `<svg viewBox="0 0 44 44"><path d="M6 21 L22 7 L38 21" fill="none" stroke="${OUT}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><rect x="10" y="19" width="24" height="19" fill="#dcebff" stroke="${OUT}" stroke-width="2.2"/><rect x="19" y="27" width="7" height="11" fill="#ff8a3d" stroke="${OUT}" stroke-width="1.8"/><path d="M28 8 l6 6 M34 8 l-6 6" stroke="#ef4b4b" stroke-width="2.4" stroke-linecap="round"/></svg>`,
+  `<svg viewBox="0 0 44 44"><circle cx="22" cy="23" r="16" fill="#fff" stroke="${OUT}" stroke-width="2.4"/><path d="M22 23 V13 M22 23 L29 27" stroke="${OUT}" stroke-width="2.6" stroke-linecap="round"/><path d="M22 7 A16 16 0 0 1 38 23 L22 23Z" fill="#ffc4c4" opacity=".8"/><circle cx="22" cy="23" r="2" fill="${OUT}"/></svg>`
+];
+const STEP_COLORS = [["var(--azul)","var(--azul-bg)"],["var(--naranja)","var(--naranja-bg)"],["var(--verde)","var(--verde-bg)"],["var(--rojo)","var(--rojo-bg)"]];
+const SIT_COLORS = {s1:["var(--azul)","var(--azul-bg)"], s2:["var(--naranja)","var(--naranja-bg)"], s3:["var(--violeta)","var(--violeta-bg)"], s4:["var(--verde)","var(--verde-bg)"]};
+const TILE_BG = ["#fff4b8","#ffd9d9","#d6eaff","#d9f5df","#ffe3cc","#ecdeff"];
+const TILE_ROT = [-1.6, 1.2, -0.8, 1.4, -1.2, 0.9];
+
+/* ---------- Contenido ---------- */
+document.getElementById("tiles").innerHTML = TILES.map((x,i) =>
+  `<div class="tile" style="background:${TILE_BG[i]}; transform:rotate(${TILE_ROT[i]}deg)"><span class="n">${x.n}</span><p>${esc(x.t)}</p><span class="src">según la docente</span></div>`).join("");
+
+const chainEl = document.getElementById("chain"), chainPanel = document.getElementById("chainPanel");
+function renderChain(i){
+  [...chainEl.children].forEach((b,j)=>b.setAttribute("aria-selected", j===i));
+  const s = CHAIN[i];
+  chainPanel.style.borderColor = STEP_COLORS[i][0];
+  chainPanel.innerHTML = `<div class="two">
+     <div class="col"><h3>${esc(s.t)}</h3><p>${esc(s.txt)}</p><div class="quotes">${s.q.map(quoteHTML).join("")}</div></div>
+     <div class="col"><p class="col-title">Cómo lo leemos</p>${readingHTML(CHAIN_READING)}<p class="limit"><b>Límite:</b> ${esc(CHAIN_READING.limit)}</p></div>
+   </div>`;
+}
+chainEl.innerHTML = CHAIN.map((s,i)=>`<button role="tab" id="paso-${i}" aria-controls="chainPanel" style="--c:${STEP_COLORS[i][0]};--c-bg:${STEP_COLORS[i][1]}">${ICONS[i]}<span class="k">${s.k}</span><span class="t">${esc(s.t)}</span></button>`).join("");
+[...chainEl.children].forEach((b,i)=>b.addEventListener("click",()=>renderChain(i)));
+renderChain(0);
+
+const tabsEl = document.getElementById("tabs"), tabPanel = document.getElementById("tabpanel");
+function dayHTML(){
+  const cls = ["meal","am","lost","meal","pm"];
+  return `<div class="day"><p class="col-title">Un día en la escuela (esquema, no a escala)</p>
+    <div class="daybar">${DAY.map((d,i)=>`<div class="${cls[i]}">${esc(d.t)}</div>`).join("")}</div>
+    <p class="small muted">La franja rayada es la hora previa al almuerzo: según la docente, una de sus dos horas de Matemática se pierde casi por completo.</p></div>`;
+}
+function flipFront(s){ return `<span class="label">Una explicación rápida…</span><span class="txt">“${esc(s.quick)}”</span><span class="hint">Tocá para ver la mirada sociológica</span>`; }
+function flipBack(s){ return `<span class="label">Mirada sociológica</span><span class="txt">${esc(s.socio)}</span><span class="hint">Tocá para volver</span>`; }
+function renderSit(i, focus){
+  [...tabsEl.children].forEach((b,j)=>{b.setAttribute("aria-selected", j===i); b.tabIndex = j===i?0:-1});
+  const s = SIT[i];
+  tabPanel.style.setProperty("--cur", SIT_COLORS[s.id][0]);
+  tabPanel.setAttribute("aria-labelledby", "tab-"+s.id);
+  tabPanel.innerHTML = `<h3 style="font-size:23px">${esc(s.title)}</h3>
+   ${s.day?dayHTML():""}
+   <div class="cols">
+     <div class="col"><p class="col-title">Lo que cuentan</p><div class="quotes">${s.q.map(quoteHTML).join("")}</div></div>
+     <div class="col"><p class="col-title">¿Y si lo miramos de otra forma?</p>
+       <button class="flip" aria-pressed="false" id="flip-${s.id}">${flipFront(s)}</button>
+       <p class="col-title">Qué hace la docente</p><ul class="plain">${s.does.map(d=>`<li>${esc(d)}</li>`).join("")}</ul>
+     </div>
+     <div class="col"><p class="col-title">Con qué categorías lo leemos</p>${s.cats.map(readingHTML).join("")}</div>
+   </div>
+   <p class="limit"><b>Lo que no podemos afirmar:</b> ${esc(s.limit)}</p>`;
+  const f = document.getElementById("flip-"+s.id);
+  f.addEventListener("click",()=>{
+    const on = f.getAttribute("aria-pressed")!=="true";
+    f.setAttribute("aria-pressed", on);
+    f.innerHTML = on ? flipBack(s) : flipFront(s);
+  });
+  if(focus) tabsEl.children[i].focus();
+}
+tabsEl.innerHTML = SIT.map(s=>`<button role="tab" id="tab-${s.id}" aria-controls="tabpanel" style="--c:${SIT_COLORS[s.id][0]};--c-bg:${SIT_COLORS[s.id][1]}">${esc(s.tab)}</button>`).join("");
+[...tabsEl.children].forEach((b,i)=>{
+  b.addEventListener("click",()=>renderSit(i));
+  b.addEventListener("keydown",e=>{
+    if(e.key==="ArrowRight") renderSit((i+1)%SIT.length,true);
+    if(e.key==="ArrowLeft") renderSit((i-1+SIT.length)%SIT.length,true);
+  });
+});
+renderSit(0);
+
+const mat = document.getElementById("matrix"), catPanel = document.getElementById("catPanel");
+mat.innerHTML = `<thead><tr><th>Categoría</th>${SIT.map(s=>`<th class="c" style="--c:${SIT_COLORS[s.id][0]}">${s.tab.split(" ")[0]}</th>`).join("")}</tr></thead>
+ <tbody>${CATS.map((c,i)=>`<tr data-i="${i}"><td><button class="catbtn" data-i="${i}"><span class="cat">${esc(c.name)}</span><span class="aut">${esc(c.aut)}</span></button></td>
+   ${SIT.map((s,j)=>{const v=c.map[s.id]; return `<td class="c">${v?`<button class="go" data-j="${j}" aria-label="${esc(c.name)} en ${esc(s.tab)}: ir a la situación"><span class="dot ${v===1?"half":""}" style="--c:${SIT_COLORS[s.id][0]}"></span></button>`:""}</td>`}).join("")}</tr>`).join("")}</tbody>`;
+function renderCat(i){
+  mat.querySelectorAll("tbody tr").forEach(r=>r.classList.toggle("sel", +r.dataset.i===i));
+  const c = CATS[i];
+  const where = SIT.filter(s=>c.map[s.id]).map(s=>s.tab).join(" · ");
+  catPanel.innerHTML = `<div class="two"><div class="col"><h3>${esc(c.name)}</h3><p class="col-title" style="color:var(--ink-soft)">${esc(c.aut)}</p><p>${c.body}</p><span class="small muted">${esc(c.cite)}</span></div>
+    <div class="col"><p class="col-title">Dónde la usamos</p><p>${esc(where)}</p></div></div>`;
+}
+mat.querySelectorAll(".catbtn").forEach(b=>b.addEventListener("click",()=>renderCat(+b.dataset.i)));
+mat.querySelectorAll(".go").forEach(b=>b.addEventListener("click",()=>{
+  renderCat(+b.closest("tr").dataset.i);
+  renderSit(+b.dataset.j);
+  document.getElementById("h-sit").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+}));
+renderCat(0);
+
+function setLink(id, url, label){
+  const a = document.getElementById(id);
+  if(url){ a.href = url; a.target = "_blank"; a.rel = "noopener"; }
+  else { a.classList.add("pending"); a.textContent = label + " (enlace pendiente)"; a.addEventListener("click", e=>e.preventDefault()); }
+}
+setLink("padletBtn", PADLET_URL, "Ir al mural (Padlet)");
+setLink("podcastBtn", PODCAST_URL, "Volver al podcast");
+</script>
+</body>
+</html>
